@@ -4,7 +4,7 @@
         <h3 class="title">Iris Notes</h3>
         <div class="flex items-center">
             <RouterLink class="about-link" to="/about">About me</RouterLink>
-            <button type="button" class="btn btn-outline-info">+ Post</button>
+            <button type="button" class="btn btn-outline-info" @click="handleClickPost">+ Post</button>
             <div>
                 <input v-model="searchText"  class="search" type="text">
                 <i class="bi bi-search search-icon"></i>
@@ -89,6 +89,9 @@
 
 <script setup>
 import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 const searchText = ref("");
 
 const activeCategory = ref("Handcraft");
@@ -144,6 +147,12 @@ const allBlogs = ref([
     editable: false,
   },
 ]);
+
+
+
+const handleClickPost = () => {
+  router.push("/addNewBlog");
+};
 </script>
 
 <style scoped>
@@ -164,11 +173,11 @@ const allBlogs = ref([
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     letter-spacing: 1px;
     color: #29292f;
-
+/* 
     text-decoration: underline;
     text-decoration-color: #e082b9;
     text-decoration-thickness: 4px;
-    text-underline-offset: 2px;
+    text-underline-offset: 2px; */
 }
 
 .about-link {
