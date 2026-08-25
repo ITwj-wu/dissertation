@@ -4,15 +4,17 @@
         <h3 class="title">Iris Notes</h3>
         <div class="flex items-center">
             <RouterLink class="about-link" to="/about">About me</RouterLink>
-            <button type="button" class="btn btn-outline-info" @click="handleClickPost">+ Post</button>
+            <button type="button" class="btn btn-outline-info me-4" @click="handleClickPost">+ Post</button>
             <div>
-                <input v-model="searchText"  class="search" type="text">
-                <i class="bi bi-search search-icon"></i>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="search..." aria-label="search" aria-describedby="basic-addon2">
+                    <i class="bi bi-search search-icon input-group-text search-icon" id="basic-addon2"></i>
+                </div>
             </div>
         </div>
     </div>
     <div class="carousel-content">
-        <div id="carouselExampleCaptions" class="carousel slide">
+        <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" >
             <div class="carousel-indicators">
                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -20,25 +22,25 @@
             </div>
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                <img src="..." class="d-block w-100" alt="...">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>First slide label</h5>
-                    <p>Some representative placeholder content for the first slide.</p>
-                </div>
-                </div>
-                <div class="carousel-item">
-                <img src="..." class="d-block w-100" alt="...">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>Second slide label</h5>
-                    <p>Some representative placeholder content for the second slide.</p>
-                </div>
+                    <img src="../assets/imgs/ceramic.png" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>First slide label</h5>
+                        <p>Some representative placeholder content for the first slide.</p>
+                    </div>
                 </div>
                 <div class="carousel-item">
-                <img src="..." class="d-block w-100" alt="...">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>Third slide label</h5>
-                    <p>Some representative placeholder content for the third slide.</p>
+                    <img src="../assets/imgs/tea.png" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Second slide label</h5>
+                        <p>Some representative placeholder content for the second slide.</p>
+                    </div>
                 </div>
+                <div class="carousel-item">
+                    <img src="../assets/imgs/guzheng.png" class="d-block w-100" alt="...">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Third slide label</h5>
+                        <p>Some representative placeholder content for the third slide.</p>
+                    </div>
                 </div>
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
@@ -63,7 +65,7 @@
         </button>
     </nav>
     <div class="blog-list">
-        <div v-for="blog in allBlogs" :key="blog.id" class="blog-card">
+        <div v-for="blog in allBlogs" :key="blog.id" class="blog-card" :style="{ backgroundImage: `url(${blog.image})` }">
              <h2>{{ blog.title }}</h2>
 
           <p class="date">
@@ -71,8 +73,8 @@
           </p>
 
           <div class="card-actions">
-            <button class="detail-btn">
-              view details
+            <button class="detail-btn" @click="handleClickViewPost(blog.id)">
+              view post
             </button>
 
             <button
@@ -97,7 +99,7 @@ const searchText = ref("");
 const activeCategory = ref("Handcraft");
 
 const categories = [
-  "Handcraft",
+  "Ceramic",
   "Nail Art",
   "Tea Ceremony",
   "Guzheng",
@@ -110,6 +112,7 @@ const allBlogs = ref([
     date: "19th August 2026",
     category: "Handcraft",
     editable: false,
+    image: "https://hips.hearstapps.com/hmg-prod/images/microfrench-iram-6994d26541310.jpg?crop=0.905xw:0.679xh;0.0561xw,0.0931xh&resize=980:*"
   },
   {
     id: 2,
@@ -153,13 +156,22 @@ const allBlogs = ref([
 const handleClickPost = () => {
   router.push("/addNewBlog");
 };
+
+const handleClickViewPost = (id) => {
+    router.push(`/blogDetail/${id}`)
+}
 </script>
 
 <style scoped>
+input:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: #dee2e6;
+}
 .homepage {
     min-height: 100vh;
     padding: 25px 40px;
-    background: #fad7d7a8;
+    /* background: #fad7d7a8; */
 }
 .header {
     /* min-height: 70px; */
@@ -181,112 +193,109 @@ const handleClickPost = () => {
 }
 
 .about-link {
-  margin-right: 35px;
-  font-size: 22px;
-  color: #29292f;
-  text-decoration: none;
+    margin-right: 35px;
+    font-size: 22px;
+    color: #29292f;
+    text-decoration: none;
 }
 
 .about-link:hover {
-  color: #8b6ca9;
+    color: #6d36a4;
+}
+
+.search-icon:hover {
+    cursor: pointer;
 }
 
 /**carousel */
 .carousel-content {
-  margin-bottom: 70px;
+    margin-bottom: 30px;
 }
 
 .carousel {
-  overflow: hidden;
-  height: 260px;
-
-  background: #e4d9e8;
+    overflow: hidden;
+    height: 300px;
+    background: #e4d9e8;
 }
 
 .carousel-item,
 .carousel-item img {
-  height: 260px;
+    height: 300px;
 }
 
 .carousel-item {
-  background: #e4d9e8;
+    background: #e4d9e8;
 }
 
 .carousel-item img {
-  object-fit: cover;
+    object-fit: cover;
 }
 
 .carousel-caption {
-  right: auto;
-  bottom: auto;
-  left: 13%;
-
-  top: 50%;
-
-  width: auto;
-
-  text-align: left;
-
-  transform: translateY(-50%);
+    right: auto;
+    bottom: auto;
+    left: 13%;
+    top: 50%;
+    width: auto;
+    text-align: left;
+    transform: translateY(-50%);
 }
 
 .carousel-caption h5 {
-  margin-bottom: 5px;
-
-  color: #28282e;
-
-  font-size: 30px;
-  font-weight: 400;
+    margin-bottom: 5px;
+    color: #28282e;
+    font-size: 30px;
+    font-weight: 400;
 }
 
 .carousel-caption p {
-  margin: 0;
-
-  color: #28282e;
-
-  font-size: 28px;
-  font-weight: 400;
+    margin: 0;
+    color: #28282e;
+    font-size: 28px;
+    font-weight: 400;
 }
 
 /**category */
 .category {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 65px;
-  margin-bottom: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 65px;
+    margin-bottom: 28px;
 }
 
 .category-item {
-  padding: 5px;
-  border: none;
-  background: transparent;
-  font-size: 16px;
-  color: #29292f;
-  cursor: pointer;
-  transition: 0.2s;
+    padding: 5px;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    color: #29292f;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
 .category-item:hover {
-  color: #d184e2;
+    color: #d184e2;
 }
 
 .category-item.active {
-  color: #d184e2;
+    color: #d184e2;
 }
 
 /** blog cards */
 .blog-list {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 26px 38px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px 38px;
 }
 
 .blog-card {
-  display: flex;
-  flex-direction: column;
-  min-height: 235px;
-  padding: 20px;
-  background: #e6dce9;
+    display: flex;
+    flex-direction: column;
+    min-height: 235px;
+    padding: 20px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 </style>
