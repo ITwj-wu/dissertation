@@ -1,5 +1,5 @@
 @import './base.css';
-@import 'tailwindcss';
+@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&display=swap');
 
 #app {
@@ -8,28 +8,7 @@
   padding: 2% 5% 0 5%;
 }
 
-.btn-outline-pink {
-    color: #E8A0B5;
-    border-color: #E8A0B5;
-    background-color: transparent;
-}
 
-.btn-outline-pink:hover {
-    color: white;
-    background-color: #E8A0B5;
-    border-color: #E8A0B5;
-}
 
-.btn-pink {
-    color: white;
-    background-color: #E8A0B5;
-    border-color: #E8A0B5;
-}
-
-.btn-pink:hover {
-    color: white;
-    background-color: #e8a0b4da;
-    border-color: #E8A0B5;
-}
 
 
