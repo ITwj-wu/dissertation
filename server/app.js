@@ -1,45 +1,59 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-
 const pool = require("./config/db");
-
 const app = express();
+const path = require("path");
+
+const blogRoutes = require("./routes/blogRoutes");
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-// 测试服务器
-app.get("/", (req, res) => {
-    res.json({
-        message: "Express API is running"
-    });
-});
+// blog API
+app.use("/api/blogs", blogRoutes);
 
 
-// test mysql
-app.get("/test-db", async (req, res) => {
-    try {
-        const [rows] = await pool.query(
-            "SELECT DATABASE() AS database_name"
-        );
+//  allow access upload image
+app.use(
+    "/uploads",
+    express.static(
+        path.join(__dirname, "uploads")
+    )
+);
 
-        res.json({
-            message: "Database connected successfully",
-            database: rows[0].database_name
-        });
 
-    } catch (error) {
-        console.error(error);
 
-        res.status(500).json({
-            message: "Database connection failed",
-            error: error.message
-        });
-    }
-});
+// test server
+// app.get("/", (req, res) => {
+//     res.json({
+//         message: "Express API is running"
+//     });
+// });
+
+
+// // test mysql
+// app.get("/test-db", async (req, res) => {
+//     try {
+//         const [rows] = await pool.query(
+//             "SELECT DATABASE() AS database_name"
+//         );
+
+//         res.json({
+//             message: "Database connected successfully",
+//             database: rows[0].database_name
+//         });
+
+//     } catch (error) {
+//         console.error(error);
+
+//         res.status(500).json({
+//             message: "Database connection failed",
+//             error: error.message
+//         });
+//     }
+// });
 
 
 const PORT = process.env.PORT || 8080;
