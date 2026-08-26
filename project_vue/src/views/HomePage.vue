@@ -4,7 +4,7 @@
         <h3 class="title">Iris Notes</h3>
         <div class="flex items-center">
             <RouterLink class="about-link" to="/about">About me</RouterLink>
-            <button type="button" class="btn btn-outline-info me-4" @click="handleClickPost">+ Post</button>
+            <button type="button" class="btn btn-outline-pink me-4" @click="handleClickPost">+ Post</button>
             <div>
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="search..." aria-label="search" aria-describedby="basic-addon2">
@@ -180,27 +180,20 @@ input:focus {
 
 .title{
     margin: 0;
-    font-size: 26px;
-    font-weight: 400;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    letter-spacing: 1px;
-    color: #29292f;
-/* 
-    text-decoration: underline;
-    text-decoration-color: #e082b9;
-    text-decoration-thickness: 4px;
-    text-underline-offset: 2px; */
+    font-family: "Dancing Script", cursive;
+    font-size: 42px;
+    color: #E8A0B5;
 }
 
 .about-link {
     margin-right: 35px;
+    font-family: "Dancing Script", cursive;
     font-size: 22px;
-    color: #29292f;
-    text-decoration: none;
+    color: #E8A0B5;
 }
 
 .about-link:hover {
-    color: #6d36a4;
+    color: #e8a0b4da;
 }
 
 .search-icon:hover {
