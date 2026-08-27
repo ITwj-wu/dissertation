@@ -108,26 +108,14 @@
                     >
                         Edit
                     </button>
+                    <button
+                        v-if="blog.id"
+                        class="btn btn-outline-pink"
+                    >
+                        Delete
+                    </button>
                 </div>
             </div>
-             <!-- <h2>{{ blog.title }}</h2>
-
-          <p class="date">
-            {{ blog.date }}
-          </p>
-
-          <div class="card-actions">
-            <button class="detail-btn" @click="handleClickViewPost(blog.id)">
-              view post
-            </button>
-
-            <button
-              v-if="blog.editable"
-              class="edit-btn"
-            >
-              Edit
-            </button>
-          </div> -->
         </div>
     </div>
     <div v-if="allBlogs && allBlogs.length == 0 && !loading" class="flex justify-center">
@@ -250,7 +238,7 @@ input:focus {
 
 .homepage {
     min-height: 100vh;
-    // padding: 25px 40px;
+    padding: 0 0 20px 0;
 
     .header {
 

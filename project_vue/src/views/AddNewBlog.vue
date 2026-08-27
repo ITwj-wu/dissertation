@@ -1,4 +1,10 @@
 <template>
+    <div class="flex justify-between header">
+        <h3 class="title">
+            Iris Notes >> Add new blog
+        </h3>
+        <button class="btn btn-outline-pink" @click="handleBack">Back -></button>
+    </div>
     <form
         ref="formRef"
         class="add-new-blog"
@@ -6,10 +12,6 @@
         @submit.prevent="handlePost"
         novalidate
     >
-        <h3 class="title">
-            Iris Notes >> Add new blog
-        </h3>
-
         <div class="mb-4">
             <label class="form-label">
                 Cover image
@@ -28,12 +30,19 @@
                 Please upload a cover image.
             </div>
 
-            <div v-if="imagePreview" class="mt-3">
+            <div v-if="imagePreview" class="mt-3 image-preview">
                 <img
                     :src="imagePreview"
                     alt="Blog cover preview"
-                    class="img-fluid rounded blog-cover-preview"
+                    class="img-fluid rounded blog-cover-preview-img"
                 />
+                <button
+                    type="button"
+                    class="btn btn-danger mt-2 clear-btn"
+                    @click="clearImage"
+                >
+                    X
+                </button>
             </div>
         </div>
 
@@ -41,15 +50,15 @@
             <p>Type</p>
 
             <button
-                v-for="category in categories"
-                :key="category"
-                :id="category"
+                v-for="category in allCategories"
+                :key="category.id"
+                :id="category.id"
                 type="button"
                 class="btn me-3"
-                :class="selectType === category ? 'btn-pink' : 'btn-outline-pink'"
-                @click="selectType = category"
+                :class="selectType === category.name ? 'btn-pink' : 'btn-outline-pink'"
+                @click="selectType = category.name"
             >
-                {{ category }}
+                {{ category.name }}
             </button>
 
             <div
@@ -58,8 +67,6 @@
             >
                 Please select a type.
             </div>
-
-            <!-- <button type="button" class="btn btn-outline-primary"> + </button> -->
         </div>
 
         <div class="mb-3">
@@ -107,11 +114,9 @@
             </div>
         </div>
 
-        <!-- <button type="button" class="btn btn-primary">Save</button> -->
-
         <button
             type="submit"
-            class="btn btn-pink"
+            class="btn btn-pink w-40"
             :disabled="loading"
         >
             {{ loading ? "Posting..." : "Post" }}
@@ -122,10 +127,11 @@
 </template>
 
 <script setup>
-
+import { getCategories } from "../api/blog";
+import { useRouter } from "vue-router";
 import Toast from "../components/Toast.vue";
 import { addBlog } from "../api/blog";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 import { Editor } from "@bytemd/vue-next";
 
@@ -135,16 +141,9 @@ import highlight from "@bytemd/plugin-highlight";
 import "bytemd/dist/index.css";
 import "highlight.js/styles/default.css";
 
-
+const router = useRouter();
 const toastRef = ref(null);
-
-const categories = [
-    "Handcraft",
-    "Nail Art",
-    "Tea Ceremony",
-    "Guzheng",
-];
-
+const allCategories = ref(null);
 const title = ref("");
 const selectType = ref("");
 const content = ref("");
@@ -153,10 +152,25 @@ const fileInput = ref(null);
 const formRef = ref(null);
 const validated = ref(false);
 
+
+onMounted(() => {
+    getAllCategories();
+});
+
 const plugins = [
     gfm(),
     highlight(),
 ];
+//
+const getAllCategories = async() => {
+     try {
+        const result = await getCategories();
+        allCategories.value = result.data;
+
+    } catch (error) {
+        console.error("Init Categories error:", error);
+    }
+};
 
 // content change
 const handleContentChange = (val) => {
@@ -247,19 +261,47 @@ const handlePost = async () => {
         loading.value = false;
     }
 };
+
+const handleBack = () => {
+    router.push("/");
+};
+
+// clear image
+const clearImage = () => {
+    imageFile.value = null;
+    imagePreview.value = "";
+
+    if (fileInput.value) {
+        fileInput.value.value = "";
+    }
+};
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .title {
     font-family: "Dancing Script", cursive;
     font-size: 42px;
     color: #E8A0B5;
 }
 
-.blog-cover-preview {
-    width: 300px;
-    height: 180px;
-    object-fit: cover;
+.image-preview {
+    position: relative;
+    .blog-cover-preview-img {
+        width: 300px;
+        height: 180px;
+        object-fit: cover;
+    }
+    .clear-btn {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 15px;
+        height: 15px;
+        border-radius: 15px;
+        font-size: 10px;
+        line-height: 3px;
+    }
 }
+
 
 </style>
