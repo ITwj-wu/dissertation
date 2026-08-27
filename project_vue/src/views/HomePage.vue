@@ -123,8 +123,8 @@
         <img src="../assets/imgs/no-data.png" width="200px" alt="">
     </div>
   </div>
+
   <!-- delete confirm modal -->
-    <!-- Modal -->
     <div ref="deleteModal"
          class="modal fade"
          id="myModal"
@@ -233,6 +233,11 @@ const initPage = async () => {
     }
 };
 
+// click btn: view post
+const handleClickViewPost = (id) => {
+    router.push(`/blogDetail/${id}`)
+};
+
 let deleteModalInstance = null;
 // click delete btn -> show confirm model
 const handleDeleteBtn = (blog) => {
@@ -294,13 +299,11 @@ onMounted(() => {
     initPage();
 });
 
+// click btn: post
 const handleClickPost = () => {
     router.push("/addNewBlog");
 };
 
-const handleClickViewPost = (id) => {
-    router.push(`/blogDetail/${id}`)
-};
 </script>
 
 <style scoped lang="scss">

@@ -47,3 +47,12 @@ export const deleteBlog = (id) => {
     });
 };
 
+
+// get blog detail by id
+export const getBlogDetail= async (id) => {
+    return request(`/blogDetail/${id}`, {
+        method: "GET"
+    });
+
+};
+

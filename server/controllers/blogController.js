@@ -227,10 +227,56 @@ const deleteBlog = async (req, res) => {
     }
 };
 
+// get blog detail by id
+const getBlogDetail = async (req, res) => {
+    try {
+
+        const { id } = req.params;
+
+        // valid id
+        if (!id) {
+            return res.status(400).json({
+                message: "Blog id is required"
+            });
+        }
+
+        const [blogs] = await pool.execute(
+            `
+            SELECT *
+            FROM blogs
+            WHERE id = ?
+            `,
+            [id]
+        );
+
+        // blog not found
+        if (blogs.length === 0) {
+            return res.status(404).json({
+                message: "Blog not found"
+            });
+        }
+
+        res.status(200).json({
+            message: "Blog retrieved successfully",
+            data: blogs[0]
+        });
+
+    } catch (error) {
+
+        console.error("Get blog detail error:", error);
+
+        res.status(500).json({
+            message: "Failed to get blog detail",
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     addBlog,
     getBlogsList,
     getCategories,
     searchBlogs,
-    deleteBlog
+    deleteBlog,
+    getBlogDetail
 };

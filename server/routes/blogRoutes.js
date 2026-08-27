@@ -8,7 +8,8 @@ const {
     getBlogsList,
     getCategories,
     searchBlogs,
-    deleteBlog
+    deleteBlog,
+    getBlogDetail
 } = require("../controllers/blogController");
 
 const router = express.Router();
@@ -115,6 +116,11 @@ router.get (
 router.delete (
     "/deleteBlog/:id",
     deleteBlog
+);
+
+router.get (
+    "/blogDetail/:id",
+    getBlogDetail
 );
 
 
