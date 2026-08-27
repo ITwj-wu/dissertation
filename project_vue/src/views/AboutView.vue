@@ -17,7 +17,7 @@
     margin-bottom: 30px;
   }
   p {
-    font-family: "Dancing Script", cursive;
+    font-family: "Cormorant Garamond", serif;
     font-size: 20px;
     color: #E8A0B5;
     margin-bottom: 30px;

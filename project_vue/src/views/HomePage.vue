@@ -1,10 +1,10 @@
 <template>
   <div class="homepage">
-    <div class="header flex items-center justify-between">
+    <div class="header flex items-center justify-between mb-3">
         <h3 class="title">Iris Notes</h3>
-        <div class="flex items-center">
+        <div class="flex items-end">
             <RouterLink class="about-link" to="/about">About me</RouterLink>
-            <button type="button" class="btn btn-outline-pink" @click="handleClickPost">+ Post</button>
+            <button type="button" class="btn-post btn btn-pink" @click="handleClickPost">+ Post</button>
         </div>
     </div>
     <div class="carousel-content">
@@ -13,28 +13,20 @@
                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="3" aria-label="Slide 4"></button>
             </div>
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <img src="../assets/imgs/ceramic.png" class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h5>First slide label</h5>
-                        <p>Some representative placeholder content for the first slide.</p>
-                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="../assets/imgs/nail.png" class="d-block w-100" alt="...">
                 </div>
                 <div class="carousel-item">
                     <img src="../assets/imgs/tea.png" class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h5>Second slide label</h5>
-                        <p>Some representative placeholder content for the second slide.</p>
-                    </div>
                 </div>
                 <div class="carousel-item">
                     <img src="../assets/imgs/guzheng.png" class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h5>Third slide label</h5>
-                        <p>Some representative placeholder content for the third slide.</p>
-                    </div>
                 </div>
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
@@ -76,10 +68,49 @@
         </div>
     </div>
     <div class="blog-list">
+        <!-- loading -->
+        <Transition name="fade">
+            <div
+                v-if="loading"
+                class="blog-loading"
+            >
+                <div
+                    class="spinner-border"
+                    role="status"
+                >
+                    <span class="visually-hidden">
+                        Loading...
+                    </span>
+                </div>
+            </div>
+        </Transition>
         <div v-for="blog in allBlogs" :key="blog.id" class="blog-card" :style="{
             backgroundImage: `url(${SERVER_URL}${blog.cover_image})`
         }">
-             <h2>{{ blog.title }}</h2>
+             <div class="blog-overlay">
+                <h2>{{ blog.title }}</h2>
+
+                <p class="date">
+                    {{ formatDate(blog.created_at) }}
+                </p>
+
+                <div class="card-actions">
+                    <button
+                        class="btn btn-pink"
+                        @click="handleClickViewPost(blog.id)"
+                    >
+                        view post
+                    </button>
+
+                    <button
+                        v-if="blog.id"
+                        class="btn btn-outline-pink"
+                    >
+                        Edit
+                    </button>
+                </div>
+            </div>
+             <!-- <h2>{{ blog.title }}</h2>
 
           <p class="date">
             {{ blog.date }}
@@ -96,10 +127,10 @@
             >
               Edit
             </button>
-          </div>
+          </div> -->
         </div>
     </div>
-    <div v-if="allBlogs && allBlogs.length == 0" class="flex justify-center">
+    <div v-if="allBlogs && allBlogs.length == 0 && !loading" class="flex justify-center">
         <img src="../assets/imgs/no-data.png" width="200px" alt="">
     </div>
   </div>
@@ -119,28 +150,20 @@ const activeCategory = ref("");
 
 const allBlogs = ref([])
 const allCategories = ref(null)
+const loading = ref(false);
 
 // get blogs list
 const getBlogs = async () => {
     try {
+        loading.value = true;
         const result = await getBlogsList(activeCategory.value);
 
         allBlogs.value = result.data;
 
     } catch (error) {
         console.error("Get blogs error:", error);
-    }
-};
-
-// get Categories
-const requestCategories = async () => {
-    try {
-        const result = await getCategories();
-        allCategories.value = result.data;
-        activeCategory.value = allCategories.value[0].name;
-
-    } catch (error) {
-        console.error("Get Categories error:", error);
+    } finally {
+         loading.value = false;
     }
 };
 
@@ -188,17 +211,36 @@ const initPage = async () => {
     }
 };
 
+// format date
+const formatDate = (date) => {
+    if (!date) return "";
+
+    return new Date(date).toLocaleDateString(
+        "en-US",
+        {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+        }
+    );
+};
+
 onMounted(() => {
     initPage();
 });
 
+const handleClickPost = () => {
+    router.push("/addNewBlog");
+};
 
 const handleClickViewPost = (id) => {
     router.push(`/blogDetail/${id}`)
-}
+};
 </script>
 
 <style scoped lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
 
 input:focus {
   outline: none;
@@ -211,20 +253,21 @@ input:focus {
     // padding: 25px 40px;
 
     .header {
-        /* min-height: 70px; */
-        margin-bottom: 30px;
 
         .title{
             margin: 0;
             font-family: "Dancing Script", cursive;
-            font-size: 42px;
+            font-size: 48px;
             color: #E8A0B5;
+        }
+        .btn-post {
+            width: 100px;
         }
 
         .about-link {
             margin-right: 35px;
             font-family: "Dancing Script", cursive;
-            font-size: 22px;
+            font-size: 30px;
             color: #E8A0B5;
             
             &:hover {
@@ -263,40 +306,15 @@ input:focus {
 
 .carousel {
     overflow: hidden;
-    height: 300px;
+    // height: 300px;
     background: #e4d9e8;
 
     .carousel-item {
-        height: 300px;
+        // height: 300px;
         background: #e4d9e8;
         img {
-            height: 300px;
+            height: 206px;
             object-fit: cover;
-        }
-    }
-
-    .carousel-caption {
-        right: auto;
-        bottom: auto;
-        left: 13%;
-        top: 50%;
-        width: auto;
-        text-align: left;
-        transform: translateY(-50%);
-        background-color: #e8a0b467;
-        
-        h5 {
-            margin-bottom: 5px;
-            color: #28282e;
-            font-size: 30px;
-            font-weight: 400;
-        }
-
-        p {
-            margin: 0;
-            color: #28282e;
-            font-size: 28px;
-            font-weight: 400;
         }
     }
 }
@@ -307,12 +325,13 @@ input:focus {
 
 .category-item {
     position: relative;
-    font-family: "Dancing Script", cursive;
+    font-family: "Cormorant Garamond", serif;
     margin-right: 30px;
     border: none;
     background: transparent;
-    font-size: 20px;
-    color: #E8A0B5;
+    font-size: 22px;
+    font-weight: 500;
+    color: #302629;
     cursor: pointer;
     transition: 0.2s;
 
@@ -337,23 +356,90 @@ input:focus {
 
 /** blog cards */
 .blog-list {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 26px 38px;
 
-    .blog-card {
+    .blog-loading {
+        position: absolute;
+        inset: 0;
         display: flex;
-        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+        background-color: rgba(255, 255, 255, 0.65);
+        z-index: 10;
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: #E8A0B5;
+        }
+    }
+
+    .blog-card {
+        position: relative;
         min-height: 235px;
-        padding: 20px;
-        border: 5px #E8A0B5 solid;
+        overflow: hidden;
         border-radius: 5px;
-        background-color: #ebbdca86 ;
+        background-color: #ebbdca86;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
+        box-shadow: 0 4px 15px rgba(232, 160, 181, 0.25);
+
+        .blog-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 25px;
+            background-color: rgba(40, 40, 46, 0.65);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+
+            h2,
+            .date,
+            .card-actions {
+                color: white;
+                opacity: 0;
+                transform: translateY(15px);
+                transition: all 0.35s ease;
+            }
+
+            h2 {
+                margin-bottom: 10px;
+                font-family: "Cormorant Garamond", serif;
+                font-size: 30px;
+                font-weight: 600;
+            }
+
+            .date {
+                margin-bottom: 25px;
+                font-size: 20px;
+                font-family: "Cormorant Garamond", serif;
+            }
+
+            .card-actions {
+                display: flex;
+                gap: 12px;
+            }
+        }
+
+        &:hover {
+            .blog-overlay {
+                opacity: 1;
+
+                h2,
+                .date,
+                .card-actions {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        }
     }
 }
-
 
 </style>
