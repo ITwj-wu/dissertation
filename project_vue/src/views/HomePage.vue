@@ -4,13 +4,7 @@
         <h3 class="title">Iris Notes</h3>
         <div class="flex items-center">
             <RouterLink class="about-link" to="/about">About me</RouterLink>
-            <button type="button" class="btn btn-outline-pink me-4" @click="handleClickPost">+ Post</button>
-            <div>
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="search..." aria-label="search" aria-describedby="basic-addon2">
-                    <i class="bi bi-search search-icon input-group-text search-icon" id="basic-addon2"></i>
-                </div>
-            </div>
+            <button type="button" class="btn btn-outline-pink" @click="handleClickPost">+ Post</button>
         </div>
     </div>
     <div class="carousel-content">
@@ -53,19 +47,38 @@
             </button>
         </div>
     </div>
-    <nav class="category">
-        <button
-            v-for="item in categories"
-            :key="item"
-            class="category-item"
-            :class="{ active: activeCategory === item }"
-            @click="activeCategory = item"
-        >
-        {{ item }}
-        </button>
-    </nav>
+    <div class="flex justify-between mb-4">
+        <nav class="flex items-end ">
+            <button
+                v-for="item in allCategories"
+                :key="item.id"
+                class="category-item"
+                :class="{ active: activeCategory === item.name }"
+                @click="activeCategory = item.name"
+            >
+            {{ item.name }}
+            </button>
+        </nav>
+        <div class="search input-group">
+            <input 
+                v-model="searchText"
+                type="text"
+                class="form-control"
+                placeholder="search..."
+                aria-label="search" 
+                aria-describedby="basic-addon2"
+            >
+            <i 
+                class="bi bi-search search-icon input-group-text search-icon"
+                id="basic-addon2"
+                @click="handleSearch"
+            ></i>
+        </div>
+    </div>
     <div class="blog-list">
-        <div v-for="blog in allBlogs" :key="blog.id" class="blog-card" :style="{ backgroundImage: `url(${blog.image})` }">
+        <div v-for="blog in allBlogs" :key="blog.id" class="blog-card" :style="{
+            backgroundImage: `url(${SERVER_URL}${blog.cover_image})`
+        }">
              <h2>{{ blog.title }}</h2>
 
           <p class="date">
@@ -90,67 +103,71 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import { getBlogsList, getCategories, searchBlogs } from "../api/blog";
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 const router = useRouter();
 const searchText = ref("");
 
-const activeCategory = ref("Handcraft");
+const activeCategory = ref("");
 
-const categories = [
-  "Ceramic",
-  "Nail Art",
-  "Tea Ceremony",
-  "Guzheng",
-];
 
-const allBlogs = ref([
-  {
-    id: 1,
-    title: "Ceramic flowers",
-    date: "19th August 2026",
-    category: "Handcraft",
-    editable: false,
-    image: "https://hips.hearstapps.com/hmg-prod/images/microfrench-iram-6994d26541310.jpg?crop=0.905xw:0.679xh;0.0561xw,0.0931xh&resize=980:*"
-  },
-  {
-    id: 2,
-    title: "Ceramic flowers",
-    date: "19th August 2026",
-    category: "Handcraft",
-    editable: true,
-  },
-  {
-    id: 3,
-    title: "",
-    date: "",
-    category: "Handcraft",
-    editable: false,
-  },
-  {
-    id: 4,
-    title: "",
-    date: "",
-    category: "Handcraft",
-    editable: false,
-  },
-  {
-    id: 5,
-    title: "",
-    date: "",
-    category: "Handcraft",
-    editable: false,
-  },
-  {
-    id: 6,
-    title: "",
-    date: "",
-    category: "Handcraft",
-    editable: false,
-  },
-]);
+const allBlogs = ref(null)
+const allCategories = ref(null)
 
+// get blogs list
+const getBlogs = async () => {
+    try {
+        const result = await getBlogsList();
+
+        allBlogs.value = result.data;
+
+    } catch (error) {
+        console.error("Get blogs error:", error);
+    }
+};
+
+// get Categories
+const requestCategories = async () => {
+    try {
+        const result = await getCategories();
+        allCategories.value = result.data;
+        activeCategory.value = allCategories.value[0].name;
+
+    } catch (error) {
+        console.error("Get Categories error:", error);
+    }
+};
+
+// click search button
+const handleSearch = async () => {
+
+    try {
+        // if search text is empty, get current category blogs
+        if (!searchText.value.trim()) {
+            getBlogs();
+            return;
+        }
+        const result = await searchBlogs(
+            searchText.value
+        );
+        allBlogs.value = result.data;
+
+    } catch (error) {
+
+        console.error(
+            "Search blogs error:",
+            error
+        );
+    }
+};
+
+onMounted(() => {
+    getBlogs();
+    requestCategories();
+});
 
 
 const handleClickPost = () => {
@@ -162,43 +179,63 @@ const handleClickViewPost = (id) => {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+
 input:focus {
   outline: none;
   box-shadow: none;
   border-color: #dee2e6;
 }
+
 .homepage {
     min-height: 100vh;
-    padding: 25px 40px;
-    /* background: #fad7d7a8; */
-}
-.header {
-    /* min-height: 70px; */
-    margin-bottom: 30px;
+    // padding: 25px 40px;
+
+    .header {
+        /* min-height: 70px; */
+        margin-bottom: 30px;
+
+        .title{
+            margin: 0;
+            font-family: "Dancing Script", cursive;
+            font-size: 42px;
+            color: #E8A0B5;
+        }
+
+        .about-link {
+            margin-right: 35px;
+            font-family: "Dancing Script", cursive;
+            font-size: 22px;
+            color: #E8A0B5;
+            
+            &:hover {
+                color: #e8a0b4da;
+            }
+        }
+    }
+
 }
 
-.title{
-    margin: 0;
-    font-family: "Dancing Script", cursive;
-    font-size: 42px;
-    color: #E8A0B5;
+.search {
+    width: 30%;
+    input {
+        border: 1px #E8A0B5 solid;
+        color: #E8A0B5;
+    }
+
+    .search-icon {
+        color: white;
+        background-color: #E8A0B5 ;
+        border: 1px #E8A0B5 solid;
+
+        &:hover {
+            cursor: pointer;
+            color: white;
+            background-color: #e8a0b4da;
+        }
+    }
 }
 
-.about-link {
-    margin-right: 35px;
-    font-family: "Dancing Script", cursive;
-    font-size: 22px;
-    color: #E8A0B5;
-}
-
-.about-link:hover {
-    color: #e8a0b4da;
-}
-
-.search-icon:hover {
-    cursor: pointer;
-}
 
 /**carousel */
 .carousel-content {
@@ -209,70 +246,61 @@ input:focus {
     overflow: hidden;
     height: 300px;
     background: #e4d9e8;
+
+    .carousel-item {
+        height: 300px;
+        background: #e4d9e8;
+        img {
+            height: 300px;
+            object-fit: cover;
+        }
+    }
+
+    .carousel-caption {
+        right: auto;
+        bottom: auto;
+        left: 13%;
+        top: 50%;
+        width: auto;
+        text-align: left;
+        transform: translateY(-50%);
+        
+        h5 {
+            margin-bottom: 5px;
+            color: #28282e;
+            font-size: 30px;
+            font-weight: 400;
+        }
+
+        p {
+            margin: 0;
+            color: #28282e;
+            font-size: 28px;
+            font-weight: 400;
+        }
+    }
 }
 
-.carousel-item,
-.carousel-item img {
-    height: 300px;
-}
 
-.carousel-item {
-    background: #e4d9e8;
-}
-
-.carousel-item img {
-    object-fit: cover;
-}
-
-.carousel-caption {
-    right: auto;
-    bottom: auto;
-    left: 13%;
-    top: 50%;
-    width: auto;
-    text-align: left;
-    transform: translateY(-50%);
-}
-
-.carousel-caption h5 {
-    margin-bottom: 5px;
-    color: #28282e;
-    font-size: 30px;
-    font-weight: 400;
-}
-
-.carousel-caption p {
-    margin: 0;
-    color: #28282e;
-    font-size: 28px;
-    font-weight: 400;
-}
 
 /**category */
-.category {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 65px;
-    margin-bottom: 28px;
-}
 
 .category-item {
-    padding: 5px;
+    margin-right: 30px;
     border: none;
     background: transparent;
-    font-size: 16px;
+    font-size: 20px;
     color: #29292f;
     cursor: pointer;
     transition: 0.2s;
-}
 
-.category-item:hover {
-    color: #d184e2;
-}
+    &:hover {
+        color: #E8A0B5;
+    }
 
-.category-item.active {
-    color: #d184e2;
+    &.active {
+        color: #E8A0B5;
+    }
 }
 
 /** blog cards */
@@ -280,15 +308,19 @@ input:focus {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 26px 38px;
+
+    .blog-card {
+        display: flex;
+        flex-direction: column;
+        min-height: 235px;
+        padding: 20px;
+        border: 5px #E8A0B5 solid;
+        border-radius: 5px;
+        background-color: #ebbdca86 ;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
 }
 
-.blog-card {
-    display: flex;
-    flex-direction: column;
-    min-height: 235px;
-    padding: 20px;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}
 </style>
