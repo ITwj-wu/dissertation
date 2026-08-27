@@ -74,6 +74,105 @@ const addBlog = async (req, res) => {
     }
 };
 
+// get list
+const getBlogsList = async (req, res) => { 
+    try { 
+
+        // get blogs list 
+        const [blogs] = await pool.execute( 
+            ` 
+            SELECT * 
+            FROM blogs 
+            ORDER BY created_at DESC 
+            ` 
+        ); 
+
+        res.status(200).json({ 
+            message: "Blogs retrieved successfully", 
+            data: blogs 
+        }); 
+
+    } catch (error) { 
+        console.error("Get blogs list error:", error); 
+
+        res.status(500).json({ 
+            message: "Failed to get blogs list", 
+            error: error.message 
+        }); 
+    } 
+}; 
+
+// get categories
+const getCategories= async (req, res) => { 
+    try { 
+
+        // get categories list 
+        const [categories] = await pool.execute( 
+            ` 
+            SELECT * 
+            FROM categories
+            ` 
+        ); 
+
+        res.status(200).json({ 
+            message: "Categories retrieved successfully", 
+            data: categories 
+        }); 
+
+    } catch (error) { 
+        console.error("Get categories list error:", error); 
+
+        res.status(500).json({ 
+            message: "Failed to get categories list", 
+            error: error.message 
+        }); 
+    } 
+};
+
+// search blogs by title
+const searchBlogs = async (req, res) => {
+    try {
+
+        const { keyword } = req.query;
+
+        // valid keyword
+        if (!keyword || !keyword.trim()) {
+            return res.status(400).json({
+                message: "Search keyword is required"
+            });
+        }
+
+        // fuzzy search by title
+        const searchKeyword = `%${keyword.trim()}%`;
+
+        const [blogs] = await pool.execute(
+            `
+            SELECT *
+            FROM blogs
+            WHERE title LIKE ?
+            ORDER BY created_at DESC
+            `,
+            [searchKeyword]
+        );
+
+        res.status(200).json({
+            message: "Blogs retrieved successfully",
+            data: blogs
+        });
+
+    } catch (error) {
+        console.error("Search blogs error:", error);
+
+        res.status(500).json({
+            message: "Failed to search blogs",
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
-    addBlog
+    addBlog,
+    getBlogsList,
+    getCategories,
+    searchBlogs
 };

@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // blog API
-app.use("/api/blogs", blogRoutes);
+app.use("/api", blogRoutes);
 
 
 //  allow access upload image
@@ -22,38 +22,6 @@ app.use(
         path.join(__dirname, "uploads")
     )
 );
-
-
-
-// test server
-// app.get("/", (req, res) => {
-//     res.json({
-//         message: "Express API is running"
-//     });
-// });
-
-
-// // test mysql
-// app.get("/test-db", async (req, res) => {
-//     try {
-//         const [rows] = await pool.query(
-//             "SELECT DATABASE() AS database_name"
-//         );
-
-//         res.json({
-//             message: "Database connected successfully",
-//             database: rows[0].database_name
-//         });
-
-//     } catch (error) {
-//         console.error(error);
-
-//         res.status(500).json({
-//             message: "Database connection failed",
-//             error: error.message
-//         });
-//     }
-// });
 
 
 const PORT = process.env.PORT || 8080;

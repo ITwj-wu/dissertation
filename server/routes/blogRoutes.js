@@ -4,7 +4,10 @@ const path = require("path");
 const fs = require("fs");
 
 const {
-    addBlog
+    addBlog,
+    getBlogsList,
+    getCategories,
+    searchBlogs
 } = require("../controllers/blogController");
 
 const router = express.Router();
@@ -86,9 +89,27 @@ const upload = multer({
 
 // POST add blogs
 router.post(
-    "/",
+    "/addBlog",
     upload.single("coverImage"),
     addBlog
 );
+
+// GET all blogs list
+router.get(
+    "/allBlogs",
+    getBlogsList
+);
+
+// GET all blogs list
+router.get(
+    "/allCategories",
+    getCategories
+);
+
+router.get (
+    "/searchBlogs",
+    searchBlogs
+);
+
 
 module.exports = router;
