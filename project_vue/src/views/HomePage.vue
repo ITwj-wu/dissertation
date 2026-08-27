@@ -54,7 +54,7 @@
                 :key="item.id"
                 class="category-item"
                 :class="{ active: activeCategory === item.name }"
-                @click="activeCategory = item.name"
+                @click="handleClickCategory(item.name)"
             >
             {{ item.name }}
             </button>
@@ -99,6 +99,9 @@
           </div>
         </div>
     </div>
+    <div v-if="allBlogs && allBlogs.length == 0" class="flex justify-center">
+        <img src="../assets/imgs/no-data.png" width="200px" alt="">
+    </div>
   </div>
 </template>
 
@@ -114,13 +117,13 @@ const searchText = ref("");
 const activeCategory = ref("");
 
 
-const allBlogs = ref(null)
+const allBlogs = ref([])
 const allCategories = ref(null)
 
 // get blogs list
 const getBlogs = async () => {
     try {
-        const result = await getBlogsList();
+        const result = await getBlogsList(activeCategory.value);
 
         allBlogs.value = result.data;
 
@@ -150,9 +153,7 @@ const handleSearch = async () => {
             getBlogs();
             return;
         }
-        const result = await searchBlogs(
-            searchText.value
-        );
+        const result = await searchBlogs(searchText.value);
         allBlogs.value = result.data;
 
     } catch (error) {
@@ -163,16 +164,34 @@ const handleSearch = async () => {
         );
     }
 };
+const handleClickCategory = (name) => {
+    activeCategory.value = name
+    getBlogs();
+};
+
+// init page
+const initPage = async () => {
+    try {
+        const result = await getCategories();
+
+        allCategories.value = result.data;
+
+        if (allCategories.value.length > 0) {
+            activeCategory.value =
+                allCategories.value[0].name;
+
+            await getBlogs();
+        }
+
+    } catch (error) {
+        console.error("Init page error:", error);
+    }
+};
 
 onMounted(() => {
-    getBlogs();
-    requestCategories();
+    initPage();
 });
 
-
-const handleClickPost = () => {
-  router.push("/addNewBlog");
-};
 
 const handleClickViewPost = (id) => {
     router.push(`/blogDetail/${id}`)
@@ -264,6 +283,7 @@ input:focus {
         width: auto;
         text-align: left;
         transform: translateY(-50%);
+        background-color: #e8a0b467;
         
         h5 {
             margin-bottom: 5px;
@@ -286,20 +306,32 @@ input:focus {
 /**category */
 
 .category-item {
+    position: relative;
+    font-family: "Dancing Script", cursive;
     margin-right: 30px;
     border: none;
     background: transparent;
     font-size: 20px;
-    color: #29292f;
+    color: #E8A0B5;
     cursor: pointer;
     transition: 0.2s;
 
     &:hover {
-        color: #E8A0B5;
+        color: #e8a0b4da;
     }
 
     &.active {
         color: #E8A0B5;
+        &::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 4px;
+            border-radius: 4px;
+            background-color: #E8A0B5;
+        }
     }
 }
 
@@ -322,5 +354,6 @@ input:focus {
         background-repeat: no-repeat;
     }
 }
+
 
 </style>

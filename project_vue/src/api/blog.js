@@ -11,9 +11,9 @@ export const addBlog = async (formData) => {
 };
 
 // get blogs list
-export const getBlogsList = async () => {
+export const getBlogsList = async (type) => {
 
-    return request("/allBlogs", {
+    return request(`/allBlogs?type=${encodeURIComponent(type)}`, {
         method: "GET"
     });
 

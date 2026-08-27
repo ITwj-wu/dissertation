@@ -78,14 +78,28 @@ const addBlog = async (req, res) => {
 const getBlogsList = async (req, res) => { 
     try { 
 
-        // get blogs list 
-        const [blogs] = await pool.execute( 
-            ` 
-            SELECT * 
-            FROM blogs 
-            ORDER BY created_at DESC 
-            ` 
-        ); 
+        const { type } = req.query;
+        let sql = `
+            SELECT *
+            FROM blogs
+        `;
+        let params = [];
+        // get blogs by category
+        if (type) {
+            sql += `
+                WHERE type = ?
+            `;
+            params.push(type);
+        }
+
+        sql += `
+            ORDER BY created_at DESC
+        `;
+
+        const [blogs] = await pool.execute(
+            sql,
+            params
+        );
 
         res.status(200).json({ 
             message: "Blogs retrieved successfully", 
@@ -100,7 +114,7 @@ const getBlogsList = async (req, res) => {
             error: error.message 
         }); 
     } 
-}; 
+};
 
 // get categories
 const getCategories= async (req, res) => { 
