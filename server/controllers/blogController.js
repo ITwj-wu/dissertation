@@ -184,9 +184,53 @@ const searchBlogs = async (req, res) => {
     }
 };
 
+// delete blog by id
+const deleteBlog = async (req, res) => {
+    try {
+
+        const { id } = req.params;
+
+        // valid id
+        if (!id) {
+            return res.status(400).json({
+                message: "Blog id is required"
+            });
+        }
+
+        const [result] = await pool.execute(
+            `
+            DELETE FROM blogs
+            WHERE id = ?
+            `,
+            [id]
+        );
+
+        // blog not found
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                message: "Blog not found"
+            });
+        }
+
+        res.status(200).json({
+            message: "Blog deleted successfully"
+        });
+
+    } catch (error) {
+
+        console.error("Delete blog error:", error);
+
+        res.status(500).json({
+            message: "Failed to delete blog",
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     addBlog,
     getBlogsList,
     getCategories,
-    searchBlogs
+    searchBlogs,
+    deleteBlog
 };

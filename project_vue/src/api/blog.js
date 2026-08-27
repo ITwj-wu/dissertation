@@ -40,3 +40,10 @@ export const searchBlogs = async (keyword) => {
 
 };
 
+// delete blog
+export const deleteBlog = (id) => {
+    return request(`/deleteBlog/${id}`, {
+        method: "DELETE"
+    });
+};
+

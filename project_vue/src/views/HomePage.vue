@@ -1,5 +1,5 @@
 <template>
-  <div class="homepage">
+ <div class="homepage">
     <div class="header flex items-center justify-between mb-3">
         <h3 class="title">Iris Notes</h3>
         <div class="flex items-end">
@@ -111,6 +111,7 @@
                     <button
                         v-if="blog.id"
                         class="btn btn-outline-pink"
+                        @click="handleDeleteBtn(blog)"
                     >
                         Delete
                     </button>
@@ -122,23 +123,55 @@
         <img src="../assets/imgs/no-data.png" width="200px" alt="">
     </div>
   </div>
+  <!-- delete confirm modal -->
+    <!-- Modal -->
+    <div ref="deleteModal"
+         class="modal fade"
+         id="myModal"
+         tabindex="-1"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true"
+    >
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">{{ selectedBlog? selectedBlog.title : '' }}</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            Are you sure you want to delete this item?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-danger" @click="handleDelete">Sure</button>
+        </div>
+        </div>
+    </div>
+    </div>
+    <Toast ref="toastRef" />
 </template>
 
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { getBlogsList, getCategories, searchBlogs } from "../api/blog";
+import { getBlogsList, getCategories, searchBlogs, deleteBlog } from "../api/blog";
+import { Modal } from "bootstrap";
+
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 const router = useRouter();
 const searchText = ref("");
-
-const activeCategory = ref("");
-
-
+const activeCategory = ref("")
 const allBlogs = ref([])
 const allCategories = ref(null)
 const loading = ref(false);
+const toastRef = ref(null);
+
+const selectedBlog = ref(null);
+const deleting = ref(false);
+
+
+const deleteModal = ref(null);
 
 // get blogs list
 const getBlogs = async () => {
@@ -175,6 +208,7 @@ const handleSearch = async () => {
         );
     }
 };
+
 const handleClickCategory = (name) => {
     activeCategory.value = name
     getBlogs();
@@ -196,6 +230,49 @@ const initPage = async () => {
 
     } catch (error) {
         console.error("Init page error:", error);
+    }
+};
+
+let deleteModalInstance = null;
+// click delete btn -> show confirm model
+const handleDeleteBtn = (blog) => {
+    selectedBlog.value = blog;
+    deleteModalInstance = Modal.getOrCreateInstance(
+        deleteModal.value
+    );
+
+    deleteModalInstance.show();
+};
+
+// confirm delete
+const handleDelete = async () => {
+    try {
+        deleting.value = true;
+
+        await deleteBlog(selectedBlog.value.id);
+
+        // get list again
+        await getBlogs();
+
+        // close modal
+        deleteModalInstance.hide();
+
+        toastRef.value.open({
+            type: "success",
+            title: "Deleted!",
+            message: "The blog has been deleted successfully."
+        });
+
+    } catch (error) {
+
+        toastRef.value.open({
+            type: "error",
+            title: "Delete failed",
+            message: error.message
+        });
+
+    } finally {
+        deleting.value = false;
     }
 };
 
@@ -401,6 +478,11 @@ input:focus {
                 font-family: "Cormorant Garamond", serif;
                 font-size: 30px;
                 font-weight: 600;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             .date {
