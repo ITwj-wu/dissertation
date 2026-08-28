@@ -6,6 +6,8 @@ const app = express();
 const path = require("path");
 
 const blogRoutes = require("./routes/blogRoutes");
+const authorRoutes = require("./routes/authorRoutes");
+
 
 app.use(cors());
 app.use(express.json());
@@ -13,6 +15,12 @@ app.use(express.urlencoded({ extended: true }));
 
 // blog API
 app.use("/api", blogRoutes);
+
+// login API
+app.use(
+    "/api/auth",
+    authorRoutes
+);
 
 
 //  allow access upload image
@@ -22,7 +30,6 @@ app.use(
         path.join(__dirname, "uploads")
     )
 );
-
 
 const PORT = process.env.PORT || 8080;
 
