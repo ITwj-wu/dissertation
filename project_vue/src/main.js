@@ -5,6 +5,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./assets/main.css";
 import "./assets/style.scss"
+
 import Toast from './components/Toast.vue'
 
 import App from './App.vue'

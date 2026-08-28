@@ -4,7 +4,7 @@
         <h3 class="title">Iris Notes</h3>
         <div class="flex items-end">
             <RouterLink class="about-link" to="/about">About me</RouterLink>
-            <button type="button" class="btn-post btn btn-pink" @click="handleClickPost">+ Post</button>
+            <button v-if="userStore.isAdmin" type="button" class="btn-post btn btn-pink" @click="handleClickPost">+ Post</button>
         </div>
     </div>
     <div class="carousel-content">
@@ -103,13 +103,13 @@
                     </button>
 
                     <button
-                        v-if="blog.id"
+                        v-if="userStore.isAdmin"
                         class="btn btn-outline-pink"
                     >
                         Edit
                     </button>
                     <button
-                        v-if="blog.id"
+                        v-if="userStore.isAdmin"
                         class="btn btn-outline-pink"
                         @click="handleDeleteBtn(blog)"
                     >
@@ -132,21 +132,21 @@
          aria-labelledby="exampleModalLabel"
          aria-hidden="true"
     >
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">{{ selectedBlog? selectedBlog.title : '' }}</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">{{ selectedBlog? selectedBlog.title : '' }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this item?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" @click="handleDelete">Sure</button>
+            </div>
+            </div>
         </div>
-        <div class="modal-body">
-            Are you sure you want to delete this item?
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-danger" @click="handleDelete">Sure</button>
-        </div>
-        </div>
-    </div>
     </div>
     <Toast ref="toastRef" />
 </template>
@@ -156,6 +156,9 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { getBlogsList, getCategories, searchBlogs, deleteBlog } from "../api/blog";
 import { Modal } from "bootstrap";
+import { useUserStore } from "../stores/user";
+
+const userStore = useUserStore();
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 

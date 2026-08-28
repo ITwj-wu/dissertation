@@ -53,28 +53,6 @@
                             </p>
                         </div>
                     </div>
-
-                    <!-- <div class="comment-item">
-                        <div class="comment-avatar">
-                            A
-                        </div>
-
-                        <div class="comment-content">
-                            <div class="comment-header flex justify-between items-center mb-8">
-                                <span class="comment-name">
-                                    Anna
-                                </span>
-
-                                <span class="comment-date">
-                                    2 hours ago
-                                </span>
-                            </div>
-
-                            <p class="comment-text">
-                                I really love the handmade details.
-                            </p>
-                        </div>
-                    </div> -->
                 </div>
                 <h3 class="pt-3"><i class="bi bi-brush"></i> Leave a comment</h3>
                 <textarea
@@ -88,8 +66,34 @@
                 </div>
             </div>
         </div>
-        
-        <button class="btn btn-outline-pink back-btn" @click="handleBack">Back-></button>
+        <div>
+            <button class="btn btn-outline-pink back-btn" @click="handleBack">Back-></button>
+            <button v-if="userStore.isLoggedIn" class="btn btn-outline-pink back-btn mt-2" @click="handleLogout">Logout</button>
+        </div>
+    </div>
+    <!-- go login confirm modal -->
+    <div ref="loginModal"
+         class="modal fade"
+         id="myModal"
+         tabindex="-1"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Need Login</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                You need to log in to post comments.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" @click="handleGoLogin">Go Login</button>
+            </div>
+            </div>
+        </div>
     </div>
     <Toast ref="toastRef" />
 </template>
@@ -98,6 +102,10 @@
 import { useRoute, useRouter } from "vue-router";
 import { getBlogDetail, addComment, getCommentsByBlogId } from "../api/blog";
 import { onMounted, ref } from "vue";
+import { useUserStore } from "../stores/user";
+import { Modal } from "bootstrap";
+
+const userStore = useUserStore();
 
 const router = useRouter();
 const route = useRoute();
@@ -108,6 +116,8 @@ const blogDetail = ref(null);
 const toastRef = ref(null);
 const commentContent = ref("");
 const allComments = ref([])
+const loginModal = ref(null);
+let loginModalInstance = null;
 
 const getBlogDetailById = async () => {
     try {
@@ -123,11 +133,10 @@ const getBlogDetailById = async () => {
 const handleAddComment = async () => {
     const token = localStorage.getItem("token");
      if (!token) {
-        toastRef.value.open({
-            type: "error",
-            title: "Please login",
-        });
-        router.push("/login");
+            loginModalInstance = Modal.getOrCreateInstance(
+            loginModal.value
+        );
+        loginModalInstance.show();
         return;
     }
 
@@ -141,7 +150,7 @@ const handleAddComment = async () => {
     }
 
     try {
-        const result = await addComment(
+         await addComment(
             {
                 blog_id: blogId,
                 content: commentContent.value.trim()
@@ -167,6 +176,12 @@ const handleAddComment = async () => {
 
 };
 
+// handleGoLogin
+const handleGoLogin = () => {
+    loginModalInstance.hide();
+    router.push("/login");
+};
+
 // get comments
 const getComments = async () => {
     try {
@@ -178,13 +193,20 @@ const getComments = async () => {
     }
 };
 
-onMounted(() => {
-    getBlogDetailById();
-    getComments();
-});
-
+// clisk btn: back
 const handleBack = () => {
     router.push("/");
+};
+
+// logout
+const handleLogout = () => {
+    userStore.logout();
+
+    toastRef.value.open({
+        type: "success",
+        title: "logout",
+        message: "Logout successfully!"
+    });
 };
 
 // format date
@@ -200,6 +222,11 @@ const formatDate = (date) => {
         }
     );
 };
+
+onMounted(() => {
+    getBlogDetailById();
+    getComments();
+});
 
 </script>
 

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '../views/HomePage.vue'
+import { useUserStore } from "../stores/user";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,6 +18,9 @@ const router = createRouter({
     {
       path: '/addNewBlog',
       name: 'addNewBlog',
+      meta: {
+        requiresAdmin: true
+      },
       component: () => import('../views/AddNewBlog.vue'),
     },
     {
@@ -31,5 +35,19 @@ const router = createRouter({
     },
   ],
 })
+
+router.beforeEach((to) => {
+    const userStore = useUserStore();
+
+    // need admin premission
+    if (to.meta.requiresAdmin) {
+
+        // no login, not admin
+        if (!userStore.isLoggedIn || !userStore.isAdmin) {
+            return "/";
+        }
+    }
+
+});
 
 export default router

@@ -83,6 +83,9 @@
 import { ref } from "vue";
 import { login, register } from "@/api/auth";
 import { useRouter } from "vue-router";
+import { useUserStore } from "../stores/user";
+const userStore = useUserStore();
+
 const router = useRouter();
 
 const toastRef = ref(null);
@@ -125,6 +128,11 @@ const handleLogin = async () => {
             email: email.value,
             password: password.value
         });
+        
+        userStore.setUser(
+            result.user,
+            result.token
+        );
 
         // save token
         localStorage.setItem(
