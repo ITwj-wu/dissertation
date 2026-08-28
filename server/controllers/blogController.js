@@ -272,11 +272,91 @@ const getBlogDetail = async (req, res) => {
     }
 };
 
+// add comment
+const addComment = async (req, res) => {
+    try {
+
+        const {
+            blog_id,
+            content
+        } = req.body;
+
+        // current login user
+        const user_id = req.user.id;
+
+        // validate
+        if (!blog_id || !content || !content.trim()) {
+            return res.status(400).json({
+                message: "blog_id and content are required"
+            });
+        }
+
+        // check blog exists
+        const [blogs] = await pool.execute(
+            `
+            SELECT id
+            FROM blogs
+            WHERE id = ?
+            `,
+            [blog_id]
+        );
+
+        if (blogs.length === 0) {
+            return res.status(404).json({
+                message: "Blog not found"
+            });
+        }
+
+        // insert comment
+        const [result] = await pool.execute(
+            `
+            INSERT INTO comments (
+                blog_id,
+                user_id,
+                content
+            )
+            VALUES (?, ?, ?)
+            `,
+            [
+                blog_id,
+                user_id,
+                content.trim()
+            ]
+        );
+
+        res.status(201).json({
+            message: "Comment added successfully",
+            data: {
+                id: result.insertId,
+                blog_id,
+                user_id,
+                content: content.trim()
+            }
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Add comment error:",
+            error
+        );
+
+        res.status(500).json({
+            message: "Failed to add comment",
+            error: error.message
+        });
+
+    }
+
+};
+
+
 module.exports = {
     addBlog,
     getBlogsList,
     getCategories,
     searchBlogs,
     deleteBlog,
-    getBlogDetail
+    getBlogDetail,
+    addComment
 };

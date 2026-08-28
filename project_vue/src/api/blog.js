@@ -56,3 +56,19 @@ export const getBlogDetail= async (id) => {
 
 };
 
+// add comment
+export const addComment= async (data,token) => {
+
+    return request("/comments", {
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+
+        body: JSON.stringify(data)
+    });
+
+};
+

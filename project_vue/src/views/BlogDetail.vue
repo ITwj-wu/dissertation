@@ -78,23 +78,25 @@
                 </div>
                 <h3 class="pt-3"><i class="bi bi-brush"></i> Leave a comment</h3>
                 <textarea
+                    v-model="commentContent"
                     class="form-control"
                     aria-label="With textarea"
                     placeholder="Add comment..."
                 ></textarea>
                 <div class="flex justify-end">
-                    <button class="btn btn-pink w-40 mt-2">Post Comment</button>
+                    <button class="btn btn-pink w-40 mt-2" @click="handleAddComment">Post Comment</button>
                 </div>
             </div>
         </div>
         
         <button class="btn btn-outline-pink back-btn" @click="handleBack">Back-></button>
     </div>
+    <Toast ref="toastRef" />
 </template>
 
 <script setup>
 import { useRoute, useRouter } from "vue-router";
-import { getBlogDetail } from "../api/blog";
+import { getBlogDetail, addComment } from "../api/blog";
 import { onMounted, ref } from "vue";
 
 const router = useRouter();
@@ -102,6 +104,9 @@ const route = useRoute();
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 const blogId = route.params.id;
 const blogDetail = ref(null);
+
+const toastRef = ref(null);
+const commentContent = ref("");
 
 const getBlogDetailById = async () => {
     try {
@@ -111,6 +116,54 @@ const getBlogDetailById = async () => {
     } catch (error) {
         console.error("Get blog detail error:", error);
     }
+};
+
+// add comment
+const handleAddComment = async () => {
+    const token = localStorage.getItem("token");
+     if (!token) {
+        toastRef.value.open({
+            type: "error",
+            title: "Please login",
+        });
+        router.push("/login");
+        return;
+    }
+
+    // check comment
+    if (!commentContent.value.trim()) {
+        toastRef.value.open({
+            type: "error",
+            title: "Comment cannot be empty",
+        });
+        return;
+    }
+
+    try {
+        const result = await addComment(
+            {
+                blog_id: blogId,
+                content: commentContent.value.trim()
+            },
+            token
+        );
+
+        // clear textarea
+        commentContent.value = "";
+        toastRef.value.open({
+            type: "success",
+            title: "Added!",
+            message: "Comment added successfully!"
+        });
+
+    } catch (error) {
+
+        toastRef.value.open({
+            type: "error",
+            title: "Fail to add comment",
+        });
+    }
+
 };
 
 onMounted(() => {

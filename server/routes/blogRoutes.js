@@ -9,7 +9,8 @@ const {
     getCategories,
     searchBlogs,
     deleteBlog,
-    getBlogDetail
+    getBlogDetail,
+    addComment
 } = require("../controllers/blogController");
 
 const router = express.Router();
@@ -121,6 +122,17 @@ router.delete (
 router.get (
     "/blogDetail/:id",
     getBlogDetail
+);
+
+// add comment
+
+const authMiddleware =
+    require("../middleware/authMiddleware");
+
+router.post(
+    "/comments",
+    authMiddleware,
+    addComment
 );
 
 
