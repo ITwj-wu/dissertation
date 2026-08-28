@@ -10,7 +10,8 @@ const {
     searchBlogs,
     deleteBlog,
     getBlogDetail,
-    addComment
+    addComment,
+    getCommentsByBlogId
 } = require("../controllers/blogController");
 
 const router = express.Router();
@@ -125,7 +126,6 @@ router.get (
 );
 
 // add comment
-
 const authMiddleware =
     require("../middleware/authMiddleware");
 
@@ -136,4 +136,9 @@ router.post(
 );
 
 
+// get comment
+router.get (
+    "/getComments/:id",
+    getCommentsByBlogId
+);
 module.exports = router;

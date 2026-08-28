@@ -350,6 +350,64 @@ const addComment = async (req, res) => {
 
 };
 
+// get comments by blog id
+const getCommentsByBlogId = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        // validate
+        if (!id) {
+            return res.status(400).json({
+                message: "Blog id is required hh"
+            });
+        }
+
+        const [comments] = await pool.execute(
+            `
+            SELECT
+                comments.id,
+                comments.blog_id,
+                comments.user_id,
+                comments.content,
+                comments.created_at,
+
+                users.username
+
+            FROM comments
+
+            JOIN users
+                ON comments.user_id = users.id
+
+            WHERE comments.blog_id = ?
+
+            ORDER BY comments.created_at DESC
+            `,
+            [id]
+        );
+
+        res.status(200).json({
+            message: "Comments retrieved successfully",
+            data: comments
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Get comments error:",
+            error
+        );
+
+        res.status(500).json({
+            message: "Failed to get comments",
+            error: error.message
+        });
+
+    }
+
+};
+
 
 module.exports = {
     addBlog,
@@ -358,5 +416,6 @@ module.exports = {
     searchBlogs,
     deleteBlog,
     getBlogDetail,
-    addComment
+    addComment,
+    getCommentsByBlogId
 };

@@ -72,3 +72,11 @@ export const addComment= async (data,token) => {
 
 };
 
+// get comments
+export const getCommentsByBlogId= async (id) => {
+    return request(`/getComments/${id}`, {
+        method: "GET"
+    });
+
+};
+

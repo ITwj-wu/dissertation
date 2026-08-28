@@ -33,28 +33,28 @@
                     Comments
                 </h3>
                 <div class="comment-list">
-                    <div class="comment-item">
+                    <div v-for="item in allComments" :key="item.id" class="comment-item">
                         <div class="comment-avatar">
-                            I
+                            {{ item.username[0] }}
                         </div>
                         <div class="comment-content">
                             <div class="comment-header flex justify-between items-center mb-8">
                                 <span class="comment-name">
-                                    Iris
+                                    {{ item.username }}
                                 </span>
 
                                 <span class="comment-date">
-                                    Just now
+                                    {{ formatDate(item.created_at) }}
                                 </span>
                             </div>
 
                             <p class="comment-text">
-                                This ceramic work is so beautiful!
+                                {{ item.content }}
                             </p>
                         </div>
                     </div>
 
-                    <div class="comment-item">
+                    <!-- <div class="comment-item">
                         <div class="comment-avatar">
                             A
                         </div>
@@ -74,7 +74,7 @@
                                 I really love the handmade details.
                             </p>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <h3 class="pt-3"><i class="bi bi-brush"></i> Leave a comment</h3>
                 <textarea
@@ -96,7 +96,7 @@
 
 <script setup>
 import { useRoute, useRouter } from "vue-router";
-import { getBlogDetail, addComment } from "../api/blog";
+import { getBlogDetail, addComment, getCommentsByBlogId } from "../api/blog";
 import { onMounted, ref } from "vue";
 
 const router = useRouter();
@@ -107,6 +107,7 @@ const blogDetail = ref(null);
 
 const toastRef = ref(null);
 const commentContent = ref("");
+const allComments = ref([])
 
 const getBlogDetailById = async () => {
     try {
@@ -147,7 +148,7 @@ const handleAddComment = async () => {
             },
             token
         );
-
+        getComments();
         // clear textarea
         commentContent.value = "";
         toastRef.value.open({
@@ -166,8 +167,20 @@ const handleAddComment = async () => {
 
 };
 
+// get comments
+const getComments = async () => {
+    try {
+        const result = await getCommentsByBlogId(blogId);
+        allComments.value = result.data;
+
+    } catch (error) {
+        console.error("Get blog comment error:", error);
+    }
+};
+
 onMounted(() => {
     getBlogDetailById();
+    getComments();
 });
 
 const handleBack = () => {
