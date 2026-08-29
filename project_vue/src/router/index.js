@@ -24,6 +24,13 @@ const router = createRouter({
       component: () => import('../views/AddNewBlog.vue'),
     },
     {
+      path: "/addNewBlog/:id?",
+      meta: {
+          requiresAdmin: true
+      },
+      component: () => import('../views/AddNewBlog.vue'),
+    },
+    {
       path: '/blogDetail/:id',
       name: 'blogDetail',
       component: () => import('../views/BlogDetail.vue'),

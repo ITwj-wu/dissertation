@@ -105,6 +105,7 @@
                     <button
                         v-if="userStore.isAdmin"
                         class="btn btn-outline-pink"
+                        @click="handleClickEdit(blog.id)"
                     >
                         Edit
                     </button>
@@ -239,6 +240,11 @@ const initPage = async () => {
 // click btn: view post
 const handleClickViewPost = (id) => {
     router.push(`/blogDetail/${id}`)
+};
+
+// click btn: edit
+const handleClickEdit = (id) => {
+    router.push(`/addNewBlog/${id}`);
 };
 
 let deleteModalInstance = null;

@@ -11,11 +11,15 @@ const {
     deleteBlog,
     getBlogDetail,
     addComment,
-    getCommentsByBlogId
+    getCommentsByBlogId,
+    updateBlog
 } = require("../controllers/blogController");
 
 const router = express.Router();
 
+// add comment
+const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/adminMiddleware");
 
 // upload dirtory
 const uploadDir = path.join(
@@ -95,6 +99,8 @@ const upload = multer({
 router.post(
     "/addBlog",
     upload.single("coverImage"),
+    authMiddleware,
+    adminMiddleware,
     addBlog
 );
 
@@ -117,6 +123,8 @@ router.get (
 
 router.delete (
     "/deleteBlog/:id",
+    authMiddleware,
+    adminMiddleware,
     deleteBlog
 );
 
@@ -125,16 +133,19 @@ router.get (
     getBlogDetail
 );
 
-// add comment
-const authMiddleware =
-    require("../middleware/authMiddleware");
+router.put(
+    "/updateBlog/:id",
+    authMiddleware,
+    adminMiddleware,
+    upload.single("coverImage"),
+    updateBlog
+);
 
 router.post(
     "/comments",
     authMiddleware,
     addComment
 );
-
 
 // get comment
 router.get (

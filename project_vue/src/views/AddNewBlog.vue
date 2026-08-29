@@ -1,7 +1,7 @@
 <template>
     <div class="flex justify-between header">
         <h3 class="title">
-            Iris Notes >> Add new blog
+            Iris Notes >> {{ isEdit ? "Edit Blog" : "Add New Blog" }}
         </h3>
         <button class="btn btn-outline-pink" @click="handleBack">Back -></button>
     </div>
@@ -22,7 +22,6 @@
                 class="form-control"
                 type="file"
                 accept="image/png, image/jpeg, image/webp"
-                required
                 @change="handleImageUpload"
             />
 
@@ -119,7 +118,7 @@
             class="btn btn-pink w-40"
             :disabled="loading"
         >
-            {{ loading ? "Posting..." : "Post" }}
+            {{ isEdit ? "Save" : "Post" }}
         </button>
     </form>
 
@@ -128,9 +127,10 @@
 
 <script setup>
 import { getCategories } from "../api/blog";
-import { useRouter } from "vue-router";
-import { addBlog } from "../api/blog";
+import { useRouter, useRoute } from "vue-router";
+import { addBlog, getBlogDetail, updateBlog } from "../api/blog";
 import { onMounted, ref } from "vue";
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 import { Editor } from "@bytemd/vue-next";
 
@@ -141,6 +141,10 @@ import "bytemd/dist/index.css";
 import "highlight.js/styles/default.css";
 
 const router = useRouter();
+const route = useRoute();
+const blogId = route.params.id;
+const isEdit = !!blogId;
+
 const toastRef = ref(null);
 const allCategories = ref(null);
 const title = ref("");
@@ -154,13 +158,48 @@ const validated = ref(false);
 
 onMounted(() => {
     getAllCategories();
+
+    if (isEdit) {
+        getEditBlog();
+    }
 });
+
+// edit: get blog details
+const getEditBlog = async () => {
+
+    try {
+
+        const result = await getBlogDetail(blogId);
+        const blog = result.data;
+        console.log(blog);
+        
+        title.value = blog.title;
+        selectType.value = blog.type;
+        content.value = blog.content;
+        if(blog.cover_image) {
+            fileInput.value = blog.cover_image
+        }
+
+        console.log(fileInput.value )
+
+        if (blog.cover_image) {
+            imagePreview.value =
+                `${SERVER_URL}${blog.cover_image}`;
+        }
+
+    } catch (error) {
+
+        console.error("Get blog detail error:", error);
+
+    }
+
+};
 
 const plugins = [
     gfm(),
     highlight(),
 ];
-//
+
 const getAllCategories = async() => {
      try {
         const result = await getCategories();
@@ -170,6 +209,7 @@ const getAllCategories = async() => {
         console.error("Init Categories error:", error);
     }
 };
+
 
 // content change
 const handleContentChange = (val) => {
@@ -214,46 +254,51 @@ const handlePost = async () => {
         return;
     }
 
-    if (!selectType.value) {
-        return;
-    }
+    // FormData
+    const formData = new FormData();
 
-    if (!content.value.trim()) {
-        return;
+    formData.append("title", title.value);
+    formData.append("type", selectType.value);
+    formData.append("content", content.value);
+
+    if (imageFile.value) {
+        formData.append("coverImage", imageFile.value);
     }
 
     try {
         loading.value = true;
+        console.log(formData)
+        
+        if (isEdit) {
+            // edit
+             await updateBlog(
+                 blogId,
+                 formData,
+            );
 
-        // FormData
-        const formData = new FormData();
-        formData.append("title", title.value);
-        formData.append("type", selectType.value);
-        formData.append("content", content.value);
+            toastRef.value.open({
+                type: "success",
+                title: "Update!",
+                message: "Your blog has been updated successfully."
+            });
 
-        if (imageFile.value) {
-            formData.append("coverImage", imageFile.value);
+            router.push("/");
+        } else {
+            // add
+            await addBlog(formData);
+
+            toastRef.value.open({
+                type: "success",
+                title: "Published!",
+                message: "Your blog has been published successfully."
+            });
+            resetForm();
         }
-
-        // for (const [key, value] of formData.entries()) {
-        //     console.log(key, value);
-        // }
-
-        // request API
-        await addBlog(formData);
-
-        toastRef.value.open({
-            type: "success",
-            title: "Published!",
-            message: "Your blog has been published successfully."
-        });
-
-        resetForm();
 
     } catch (error) {
         toastRef.value.open({
             type: "error",
-            title: "Post failed",
+            title: "Failed",
             message: error.message
         });
     } finally {
@@ -274,6 +319,7 @@ const clearImage = () => {
         fileInput.value.value = "";
     }
 };
+
 </script>
 
 <style scoped lang="scss">

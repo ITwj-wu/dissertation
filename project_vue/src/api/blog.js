@@ -1,10 +1,30 @@
 import { request } from "./request";
+const token = localStorage.getItem("token");
 
 // add new blog
 export const addBlog = async (formData) => {
 
     return request("/addBlog", {
         method: "POST",
+         headers: {
+            "Authorization": `Bearer ${token}`
+        },
+
+        body: formData
+    });
+
+};
+
+// update blog
+export const updateBlog= async (id, formData) => {
+
+    return request(`/updateBlog/${id}`, {
+        method: "PUT",
+
+        headers: {
+            "Authorization": `Bearer ${token}`
+        },
+
         body: formData
     });
 
@@ -43,7 +63,10 @@ export const searchBlogs = async (keyword) => {
 // delete blog
 export const deleteBlog = (id) => {
     return request(`/deleteBlog/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
     });
 };
 
@@ -56,8 +79,10 @@ export const getBlogDetail= async (id) => {
 
 };
 
+
+
 // add comment
-export const addComment= async (data,token) => {
+export const addComment= async (data) => {
 
     return request("/comments", {
         method: "POST",

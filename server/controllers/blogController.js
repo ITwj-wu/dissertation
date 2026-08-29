@@ -272,6 +272,87 @@ const getBlogDetail = async (req, res) => {
     }
 };
 
+// update blog by id
+const updateBlog = async (req, res) => {
+    try {
+
+        const { id } = req.params;
+
+        const {
+            title,
+            type,
+            content
+        } = req.body;
+
+        if (!title || !title.trim()) {
+            return res.status(400).json({
+                message: "Title is required"
+            });
+        }
+
+        if (req.file) {
+
+            const coverImage =
+                `/uploads/covers/${req.file.filename}`;
+
+            await pool.execute(
+                `
+                UPDATE blogs
+                SET
+                    title = ?,
+                    type = ?,
+                    content = ?,
+                    cover_image = ?
+                WHERE id = ?
+                `,
+                [
+                    title,
+                    type,
+                    content,
+                    coverImage,
+                    id
+                ]
+            );
+
+        } else {
+
+            await pool.execute(
+                `
+                UPDATE blogs
+                SET
+                    title = ?,
+                    type = ?,
+                    content = ?
+                WHERE id = ?
+                `,
+                [
+                    title,
+                    type,
+                    content,
+                    id
+                ]
+            );
+        }
+
+        res.status(200).json({
+            message: "Blog updated successfully"
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Update blog error:",
+            error
+        );
+
+        res.status(500).json({
+            message: "Failed to update blog",
+            error: error.message
+        });
+
+    }
+};
+
 // add comment
 const addComment = async (req, res) => {
     try {
@@ -417,5 +498,6 @@ module.exports = {
     deleteBlog,
     getBlogDetail,
     addComment,
-    getCommentsByBlogId
+    getCommentsByBlogId,
+    updateBlog
 };

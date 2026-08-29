@@ -131,7 +131,6 @@ const getBlogDetailById = async () => {
 
 // add comment
 const handleAddComment = async () => {
-    const token = localStorage.getItem("token");
      if (!token) {
             loginModalInstance = Modal.getOrCreateInstance(
             loginModal.value
@@ -154,8 +153,7 @@ const handleAddComment = async () => {
             {
                 blog_id: blogId,
                 content: commentContent.value.trim()
-            },
-            token
+            }
         );
         getComments();
         // clear textarea
