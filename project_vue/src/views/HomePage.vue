@@ -5,6 +5,11 @@
         <div class="flex items-end">
             <RouterLink class="about-link" to="/about">About me</RouterLink>
             <button v-if="userStore.isAdmin" type="button" class="btn-post btn btn-pink" @click="handleClickPost">+ Post</button>
+            <button v-if="!userStore.isLoggedIn" class="btn btn-outline-pink" @click="handleGoLogin">Login</button>
+            <div v-if="userStore.isLoggedIn" class="flex ">
+                <div class="px-4 text-2xl username">{{ userStore.user?.username }}</div>
+                <button  class="btn btn-outline-pink" @click="handleLogout">Logout</button>
+            </div>
         </div>
     </div>
     <div class="carousel-content">
@@ -313,6 +318,22 @@ const handleClickPost = () => {
     router.push("/addNewBlog");
 };
 
+// handleGoLogin
+const handleGoLogin = () => {
+    router.push("/login");
+};
+
+// logout
+const handleLogout = () => {
+    userStore.logout();
+
+    toastRef.value.open({
+        type: "success",
+        title: "logout",
+        message: "Logout successfully!"
+    });
+};
+
 </script>
 
 <style scoped lang="scss">
@@ -339,6 +360,9 @@ input:focus {
         }
         .btn-post {
             width: 100px;
+        }
+        .username {
+            font-family: "Cormorant Garamond", serif;
         }
 
         .about-link {

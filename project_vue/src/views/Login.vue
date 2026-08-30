@@ -120,7 +120,12 @@ const handleLogin = async () => {
 
         // valid
         if (!email.value || !password.value) {
-            alert("Email and password are required");
+
+            toastRef.value.open({
+                type: "error",
+                title: "Login failed",
+                message: "Email and password are required"
+            });
             return;
         }
 

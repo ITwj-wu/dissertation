@@ -69,6 +69,7 @@
         <div>
             <button class="btn btn-outline-pink back-btn" @click="handleBack">Back-></button>
             <button v-if="userStore.isLoggedIn" class="btn btn-outline-pink back-btn mt-2" @click="handleLogout">Logout</button>
+            <button v-else="userStore.isLoggedIn" class="btn btn-outline-pink back-btn mt-2" @click="handleGoLogin">Login</button>
         </div>
     </div>
     <!-- go login confirm modal -->
@@ -131,7 +132,7 @@ const getBlogDetailById = async () => {
 
 // add comment
 const handleAddComment = async () => {
-     if (!token) {
+     if (!userStore.isLoggedIn) {
             loginModalInstance = Modal.getOrCreateInstance(
             loginModal.value
         );
@@ -176,7 +177,9 @@ const handleAddComment = async () => {
 
 // handleGoLogin
 const handleGoLogin = () => {
-    loginModalInstance.hide();
+    if(loginModalInstance) {
+        loginModalInstance.hide();
+    }
     router.push("/login");
 };
 
