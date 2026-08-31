@@ -11,7 +11,6 @@ The same application is implemented using two different frontend frameworks:
 
 Both implementations share the same backend API and MySQL database, allowing the two frontend frameworks to be compared while maintaining the same core functionality.
 
----
 
 ## 2. Features
 
@@ -26,7 +25,6 @@ The personal blog website provides the following main features:
 7. Post comments
 8. Role-based access control for admin functions
 
----
 
 ## 3. Frontend
 
@@ -63,7 +61,6 @@ Technology stack:
 
 The React version reproduces the same core functionality as the Vue version while using React-specific approaches for component management, state management, and routing.
 
----
 
 ## 4. Backend
 
@@ -97,7 +94,6 @@ Admin-only operations include:
 
 The backend validates the user's authentication and role before allowing protected operations.
 
----
 
 ## 5. Database
 
