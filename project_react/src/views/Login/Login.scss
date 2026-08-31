@@ -1,0 +1,68 @@
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 40px;
+    background: white;
+    border-radius: 20px;
+    box-shadow:
+        0 8px 25px rgba(232, 160, 181, 0.15),
+        0 15px 40px rgba(0, 0, 0, 0.06);
+}
+
+.auth-title {
+    margin-bottom: 5px;
+    text-align: center;
+    font-family: "Dancing Script", cursive;
+    font-size: 48px;
+    color: #E8A0B5;
+}
+
+.auth-subtitle {
+    margin-bottom: 30px;
+    text-align: center;
+    color: #8b8b8b;
+}
+
+.form-label {
+    color: #555;
+}
+
+.form-control {
+    padding: 10px 14px;
+    border: 1px solid rgba(232, 160, 181, 0.5);
+    &:focus {
+        border-color: #E8A0B5;
+        box-shadow:
+            0 0 0 0.2rem rgba(232, 160, 181, 0.15);
+    }
+}
+
+.auth-switch {
+    margin-top: 25px;
+
+    text-align: center;
+
+    color: #888;
+
+    span {
+        margin-left: 5px;
+
+        color: #E8A0B5;
+        font-weight: 500;
+
+        cursor: pointer;
+
+        &:hover {
+            color: #d87f9d;
+            text-decoration: underline;
+        }
+    }
+}

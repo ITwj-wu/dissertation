@@ -1,8 +1,8 @@
 import { request } from "./request";
-const token = localStorage.getItem("token");
 
 // add new blog
 export const addBlog = async (formData) => {
+    const token = localStorage.getItem("token");
 
     return request("/addBlog", {
         method: "POST",
@@ -17,6 +17,7 @@ export const addBlog = async (formData) => {
 
 // update blog
 export const updateBlog= async (id, formData) => {
+    const token = localStorage.getItem("token");
 
     return request(`/updateBlog/${id}`, {
         method: "PUT",
@@ -62,6 +63,8 @@ export const searchBlogs = async (keyword) => {
 
 // delete blog
 export const deleteBlog = (id) => {
+    const token = localStorage.getItem("token");
+
     return request(`/deleteBlog/${id}`, {
         method: "DELETE",
         headers: {
@@ -83,6 +86,7 @@ export const getBlogDetail= async (id) => {
 
 // add comment
 export const addComment= async (data) => {
+    const token = localStorage.getItem("token");
 
     return request("/comments", {
         method: "POST",

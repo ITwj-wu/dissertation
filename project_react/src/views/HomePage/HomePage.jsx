@@ -244,7 +244,7 @@ const HomePage = () => {
                         {/* show current user */}
                         {isLoggedIn && (
                             <div className="user-area flex">
-                                <div className="username px-4 text-2xl">
+                                <div className="username px-4 text-2xl flex items-end">
                                     {user?.username}
                                 </div>
                                 <button

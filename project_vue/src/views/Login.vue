@@ -180,7 +180,7 @@ const handleRegister = async () => {
         }
 
         // request register API
-        const result = await register({
+        await register({
             username: username.value.trim(),
             email: email.value.trim(),
             password: password.value
