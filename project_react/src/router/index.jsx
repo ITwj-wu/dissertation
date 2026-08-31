@@ -6,6 +6,8 @@ import AddNewBlog from "../views/AddNewBlog/AddNewBlog"
 import BlogDetail from "../views/BlogDetail/BlogDetail"
 import Login from "../views/Login/Login"
 
+import AdminRoute from "./adminRoute";
+
 const router = createBrowserRouter([
     {
         path: "/",
@@ -18,16 +20,6 @@ const router = createBrowserRouter([
     },
 
     {
-        path: "/addNewBlog",
-        element: <AddNewBlog />
-    },
-
-    {
-        path: "/addNewBlog/:id",
-        element: <AddNewBlog />
-    },
-
-    {
         path: "/blogDetail/:id",
         element: <BlogDetail />
     },
@@ -35,6 +27,22 @@ const router = createBrowserRouter([
     {
         path: "/login",
         element: <Login />
+    },
+
+    // Admin routes
+    {
+        element: <AdminRoute />,
+        children: [
+            {
+                path: "/addNewBlog",
+                element: <AddNewBlog />
+            },
+            {
+                path: "/editBlog/:id",
+                element: <AddNewBlog />
+            }
+
+        ]
     }
 ]);
 
