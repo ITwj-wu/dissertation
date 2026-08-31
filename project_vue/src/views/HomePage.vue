@@ -249,7 +249,7 @@ const handleClickViewPost = (id) => {
 
 // click btn: edit
 const handleClickEdit = (id) => {
-    router.push(`/addNewBlog/${id}`);
+    router.push(`/editBlog/${id}`);
 };
 
 let deleteModalInstance = null;
