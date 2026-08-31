@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@bytemd/plugin-gfm": "^1.22.0",
+    "@bytemd/plugin-highlight": "^1.22.0",
+    "@bytemd/react": "^1.22.0",
     "@tailwindcss/vite": "^4.3.3",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",

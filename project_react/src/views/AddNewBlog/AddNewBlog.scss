@@ -1,0 +1,24 @@
+.title {
+    font-family: "Dancing Script", cursive;
+    font-size: 42px;
+    color: #E8A0B5;
+}
+
+.image-preview {
+    position: relative;
+    .blog-cover-preview-img {
+        width: 300px;
+        height: 180px;
+        object-fit: cover;
+    }
+    .clear-btn {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 15px;
+        height: 15px;
+        border-radius: 15px;
+        font-size: 10px;
+        line-height: 3px;
+    }
+}
