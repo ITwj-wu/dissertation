@@ -1,0 +1,210 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap');
+
+input.form-control:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: #E8A0B5;
+}
+
+.homepage {
+    min-height: 100vh;
+    padding: 0 0 20px 0;
+
+    .header {
+
+        .title{
+            margin: 0;
+            font-family: "Dancing Script", cursive;
+            font-size: 48px;
+            color: #E8A0B5;
+        }
+        .btn-post {
+            width: 100px;
+        }
+        .username {
+            font-family: "Cormorant Garamond", serif;
+        }
+
+        .about-link {
+            margin-right: 35px;
+            font-family: "Dancing Script", cursive;
+            font-size: 30px;
+            color: #E8A0B5;
+            
+            &:hover {
+                color: #e8a0b4da;
+            }
+        }
+    }
+
+}
+
+.search {
+    width: 30% !important;
+    input {
+        border: 1px #E8A0B5 solid;
+        color: #E8A0B5;
+    }
+
+    .search-icon {
+        color: white;
+        background-color: #E8A0B5 ;
+        border: 1px #E8A0B5 solid;
+
+        &:hover {
+            cursor: pointer;
+            color: white;
+            background-color: #e8a0b4da;
+        }
+    }
+}
+
+
+/**carousel */
+.carousel-content {
+    margin-bottom: 30px;
+}
+
+.carousel {
+    overflow: hidden;
+    // height: 300px;
+    background: #e4d9e8;
+
+    .carousel-item {
+        // height: 300px;
+        background: #e4d9e8;
+        img {
+            height: 206px;
+            object-fit: cover;
+        }
+    }
+}
+
+
+
+/**category */
+
+.category-item {
+    position: relative;
+    font-family: "Cormorant Garamond", serif;
+    margin-right: 30px;
+    border: none;
+    background: transparent;
+    font-size: 22px;
+    font-weight: 500;
+    color: #302629;
+    cursor: pointer;
+    transition: 0.2s;
+
+    &:hover {
+        color: #e8a0b4da;
+    }
+
+    &.active {
+        color: #E8A0B5;
+        &::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 4px;
+            border-radius: 4px;
+            background-color: #E8A0B5;
+        }
+    }
+}
+
+/** blog cards */
+.blog-list {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px 38px;
+
+    .blog-loading {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+        background-color: rgba(255, 255, 255, 0.65);
+        z-index: 10;
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: #E8A0B5;
+        }
+    }
+
+    .blog-card {
+        position: relative;
+        min-height: 235px;
+        overflow: hidden;
+        border-radius: 5px;
+        background-color: #ebbdca86;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        box-shadow: 0 4px 15px rgba(232, 160, 181, 0.25);
+
+        .blog-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 25px;
+            background-color: rgba(40, 40, 46, 0.65);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+
+            h2,
+            .date,
+            .card-actions {
+                color: white;
+                opacity: 0;
+                transform: translateY(15px);
+                transition: all 0.35s ease;
+            }
+
+            h2 {
+                margin-bottom: 10px;
+                font-family: "Cormorant Garamond", serif;
+                font-size: 30px;
+                font-weight: 600;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .date {
+                margin-bottom: 25px;
+                font-size: 20px;
+                font-family: "Cormorant Garamond", serif;
+            }
+
+            .card-actions {
+                display: flex;
+                gap: 12px;
+            }
+        }
+
+        &:hover {
+            .blog-overlay {
+                opacity: 1;
+
+                h2,
+                .date,
+                .card-actions {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        }
+    }
+}
