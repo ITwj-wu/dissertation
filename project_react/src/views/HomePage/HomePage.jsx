@@ -127,7 +127,7 @@ const HomePage = () => {
     
     // click btn: edit
      const handleClickEdit = (id) => {
-        navigate(`/addNewBlog/${id}`);
+        navigate(`/editBlog//${id}`);
     };
 
     // click delete
@@ -486,7 +486,7 @@ const HomePage = () => {
             {!loading &&
                 allBlogs.length === 0 && (
 
-                <div className="no-data">
+                <div className="no-data flex justify-center">
 
                     <img
                         src="/src/assets/imgs/no-data.png"
