@@ -166,7 +166,7 @@ const BlogDetail = () => {
                     {blogDetail && (
 
                         <div className="article">
-                            <h1>{blogDetail.title}</h1>
+                            <h1 className="blog-title">{blogDetail.title}</h1>
                             <div className="blog-meta">
                                 <span className="blog-category">{blogDetail.type}</span>
                                 

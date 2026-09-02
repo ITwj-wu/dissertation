@@ -3,7 +3,7 @@
         <div class="w-100">
             <div class="two-card blog-detail">
                 <div v-if="blogDetail" class="article">
-                    <h1>{{ blogDetail.title }}</h1>
+                    <h1 class="blog-title">{{ blogDetail.title }}</h1>
                     <div class="blog-meta">
                         <span class="blog-category">
                             {{ blogDetail.type }}
@@ -246,7 +246,7 @@ textarea:focus {
 }
 
 .blog-detail {
-    h1 {
+    .blog-title{
         margin: 0;
         font-family: "Dancing Script", cursive;
         font-size: 48px;
